@@ -1,28 +1,30 @@
 from churnprediction.components.data_ingestion import DataIngestion
+from churnprediction.components.data_validation import DataValidation
 from churnprediction.exception.exception import ChurnPredictionException
 from churnprediction.logging.logger import logging
 from churnprediction.entity.config_entity import DataIngestionConfig, DataValidationConfig
 from churnprediction.entity.config_entity import TrainingPipelineConfig
-from churnprediction.components.data_validation import DataValidation
 
 import sys
 
-if __name__=='__main__':
+if __name__ == '__main__':
     try:
-        trainingpipelineconfig = TrainingPipelineConfig()
-        dataingestionconfig = DataIngestionConfig(trainingpipelineconfig)
-        data_ingestion = DataIngestion(dataingestionconfig)
-        logging.info("Initiate the data Ingestion")
-        dataingestionartifact = data_ingestion.initiate_data_ingestion()
-        logging.info("Data Initiation completed")
-        print(dataingestionartifact)
-        data_validation_config = DataValidationConfig(trainingpipelineconfig)
-        data_validation = DataValidation(dataingestionartifact, data_validation_config)
-        logging.info("Initiate the data validation")
-        data_validation_artifact = data_validation.initiate_data_validation()
-        logging.info("data validation completed")
-        print(data_validation_artifact)
+        training_pipeline_config = TrainingPipelineConfig()
+        data_ingestion_config = DataIngestionConfig(training_pipeline_config)
+        data_ingestion = DataIngestion(data_ingestion_config)
+        data_validation_config = DataValidationConfig(training_pipeline_config)
+
+        logging.info("Starting data ingestion...")
+        data_ingestion_artifact = data_ingestion.initiate_data_ingestion()
+        logging.info("Data ingestion completed.")
+        print(f"✅ Data saved to: {data_ingestion_artifact.feature_store_file_path}")
+
+        data_validation = DataValidation(data_ingestion_artifact, data_validation_config)
+        logging.info("Starting data validation...")
+        data_validation.initiate_data_validation()
+        logging.info("Data Validation completed successfully.")
+        print(f"✅ Data Validation successful and saved to: {data_validation_config.drift_report_file_path} ")
 
     except Exception as e:
-            raise ChurnPredictionException(e,sys)
-    
+        raise ChurnPredictionException(e, sys)
+
