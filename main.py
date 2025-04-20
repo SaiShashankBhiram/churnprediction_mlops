@@ -1,9 +1,10 @@
 from churnprediction.components.data_ingestion import DataIngestion
 from churnprediction.components.data_validation import DataValidation
 from churnprediction.components.data_transformation import DataTransformation
+from churnprediction.components.model_trainer import ModelTrainer
 from churnprediction.exception.exception import ChurnPredictionException
 from churnprediction.logging.logger import logging
-from churnprediction.entity.config_entity import DataIngestionConfig, DataValidationConfig, DataTransformationConfig
+from churnprediction.entity.config_entity import DataIngestionConfig, DataValidationConfig, DataTransformationConfig, ModelTrainerConfig
 from churnprediction.entity.config_entity import TrainingPipelineConfig
 
 import sys
@@ -39,6 +40,12 @@ if __name__ == '__main__':
         print(f"   🧪 Transformed Test File:  {data_transformation_artifact.transformed_test_file_path}")
 
         logging.info("🏁 Pipeline execution completed successfully.")
+        logging.info("Model Training started")
+        model_trainer_config = ModelTrainerConfig(training_pipeline_config)
+        model_trainer = ModelTrainer(model_trainer_config, data_transformation_artifact)
+        model_trainer_artifact = model_trainer.initiate_model_trainer()
+
+        logging.info("Model Training artifact created")
 
     except Exception as e:
         raise ChurnPredictionException(e, sys)
