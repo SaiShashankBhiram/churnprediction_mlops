@@ -71,8 +71,8 @@ class DataValidation:
     def initiate_data_validation(self):
         try:
             # Define paths
-            input_file_path = "artifacts/data_ingestion/customerchurn.csv"
-            output_dir = "artifacts/data_validation"
+            input_file_path = self.data_ingestion_artifact.feature_store_file_path
+            output_dir = self.data_validation_config.data_validation_dir
             encoders_file_path = os.path.join(output_dir, "label_encoders.json")
 
             # Create output directory if it doesn't exist
@@ -100,22 +100,39 @@ class DataValidation:
             X = df.drop("Churn", axis=1)
             y = df["Churn"]
 
-            self.detect_dataset_drift(base_df=df, current_df=df)
+            # Perform schema validation and dataset drift detection
+            schema_validation_status = self.validate_number_of_columns(df)  # assuming schema validation function
+            drift_status = self.detect_dataset_drift(base_df=df, current_df=df)
+            dataset_drift_status = False if drift_status else True  # Adjust logic based on your drift function
 
             # Train-test split
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
             # Save splits
-            X_train.to_csv(os.path.join(output_dir, "X_train.csv"), index=False)
-            X_test.to_csv(os.path.join(output_dir, "X_test.csv"), index=False)
-            y_train.to_csv(os.path.join(output_dir, "y_train.csv"), index=False)
-            y_test.to_csv(os.path.join(output_dir, "y_test.csv"), index=False)
+            X_train.to_csv(self.data_validation_config.X_train_file_path, index=False)
+            X_test.to_csv(self.data_validation_config.X_test_file_path, index=False)
+            y_train.to_csv(self.data_validation_config.y_train_file_path, index=False)
+            y_test.to_csv(self.data_validation_config.y_test_file_path, index=False)
 
             # Save encoders
             with open(encoders_file_path, "w") as f:
                 json.dump(encoder_dict, f, indent=4)
 
             logging.info("Data validation completed and saved successfully.")
+
+            # Create DataValidationArtifact with the new fields
+            data_validation_artifact = DataValidationArtifact(
+                drift_report_file_path=self.data_validation_config.drift_report_file_path,
+                invalid_data_report_file_path=self.data_validation_config.invalid_data_report_file_path,
+                X_train_file_path=self.data_validation_config.X_train_file_path,
+                X_test_file_path=self.data_validation_config.X_test_file_path,
+                y_train_file_path=self.data_validation_config.y_train_file_path,
+                y_test_file_path=self.data_validation_config.y_test_file_path,
+                schema_validation_status=schema_validation_status,  # Include schema validation status
+                dataset_drift_status=dataset_drift_status         # Include dataset drift status
+            )
+
+            return data_validation_artifact
 
         except Exception as e:
             raise ChurnPredictionException(e, sys)

@@ -1,0 +1,21 @@
+[ 2025-04-20 14:31:19,024 ] 17 root - INFO - Starting data ingestion...
+[ 2025-04-20 14:31:19,024 ] 20 root - INFO - Starting data ingestion...
+[ 2025-04-20 14:31:25,562 ] 56 root - INFO - Data saved to Artifacts\2025-04-20-14-31-16\data_ingestion\customerchurn.csv
+[ 2025-04-20 14:31:25,572 ] 22 root - INFO - Data ingestion completed.
+[ 2025-04-20 14:31:25,572 ] 26 root - INFO - Starting data validation...
+[ 2025-04-20 14:31:25,646 ] 83 root - INFO - Loaded data from Artifacts\2025-04-20-14-31-16\data_ingestion\customerchurn.csv with shape (7043, 20)
+[ 2025-04-20 14:31:25,716 ] 94 root - INFO - Categorical columns label encoded.
+[ 2025-04-20 14:31:25,717 ] 34 root - INFO - Required number of columns: 2
+[ 2025-04-20 14:31:25,724 ] 35 root - INFO - Data frame has columns: 20
+[ 2025-04-20 14:31:25,867 ] 121 root - INFO - Data validation completed and saved successfully.
+[ 2025-04-20 14:31:25,867 ] 28 root - INFO - Data Validation completed successfully.
+[ 2025-04-20 14:31:25,867 ] 34 root - INFO - \U0001f504 Starting data transformation...
+[ 2025-04-20 14:31:25,867 ] 23 root - INFO - Entered initiate_data_transformation method of DataTransformation class
+[ 2025-04-20 14:31:25,867 ] 25 root - INFO - \U0001f501 Starting data transformation
+[ 2025-04-20 14:31:25,979 ] 48 root - INFO - \U0001f9fc Filled missing TotalCharges values with 0.0
+[ 2025-04-20 14:31:26,309 ] 57 root - INFO - \U0001f4ca After SMOTE: X_train_smote shape: (8274, 19), y_train_smote shape: (8274,)
+[ 2025-04-20 14:31:26,325 ] 39 root - INFO - Entered the save_obj method of mainUtils class
+[ 2025-04-20 14:31:26,329 ] 43 root - INFO - Exited the save_object method of MainUtils class
+[ 2025-04-20 14:31:26,329 ] 78 root - INFO - \u2705 Data transformation completed successfully.
+[ 2025-04-20 14:31:26,329 ] 36 root - INFO - \u2705 Data transformation completed.
+[ 2025-04-20 14:31:26,329 ] 41 root - INFO - \U0001f3c1 Pipeline execution completed successfully.

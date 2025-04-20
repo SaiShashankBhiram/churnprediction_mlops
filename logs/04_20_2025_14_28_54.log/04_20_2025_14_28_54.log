@@ -1,0 +1,10 @@
+[ 2025-04-20 14:28:58,116 ] 17 root - INFO - Starting data ingestion...
+[ 2025-04-20 14:28:58,116 ] 20 root - INFO - Starting data ingestion...
+[ 2025-04-20 14:29:10,403 ] 56 root - INFO - Data saved to Artifacts\2025-04-20-14-28-55\data_ingestion\customerchurn.csv
+[ 2025-04-20 14:29:10,422 ] 22 root - INFO - Data ingestion completed.
+[ 2025-04-20 14:29:10,422 ] 26 root - INFO - Starting data validation...
+[ 2025-04-20 14:29:10,495 ] 83 root - INFO - Loaded data from Artifacts\2025-04-20-14-28-55\data_ingestion\customerchurn.csv with shape (7043, 20)
+[ 2025-04-20 14:29:10,563 ] 94 root - INFO - Categorical columns label encoded.
+[ 2025-04-20 14:29:10,563 ] 34 root - INFO - Required number of columns: 2
+[ 2025-04-20 14:29:10,575 ] 35 root - INFO - Data frame has columns: 20
+[ 2025-04-20 14:29:10,729 ] 121 root - INFO - Data validation completed and saved successfully.
