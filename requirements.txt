@@ -9,5 +9,9 @@ scikit-learn
 pymongo[srv]
 dill
 imbalanced-learn
+dagshub
+fastapi
+uvicorn
+python-multipart
 
 #-e .

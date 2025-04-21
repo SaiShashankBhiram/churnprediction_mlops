@@ -17,7 +17,8 @@ class DataValidationArtifact:
         y_train_file_path: str,
         y_test_file_path: str,
         schema_validation_status: bool,
-        dataset_drift_status: bool
+        dataset_drift_status: bool,
+        label_encoder_path: str
     ):
         self.drift_report_file_path = drift_report_file_path
         self.invalid_data_report_file_path = invalid_data_report_file_path
@@ -27,12 +28,14 @@ class DataValidationArtifact:
         self.y_test_file_path = y_test_file_path
         self.schema_validation_status = schema_validation_status
         self.dataset_drift_status = dataset_drift_status
+        self.label_encoder_path = label_encoder_path
 
 @dataclass
 class DataTransformationArtifact:
     transformed_object_file_path: str
     transformed_train_file_path: str
     transformed_test_file_path: str
+    label_encoder_path: str
 
 @dataclass
 class ClassificationMetricArtifact:

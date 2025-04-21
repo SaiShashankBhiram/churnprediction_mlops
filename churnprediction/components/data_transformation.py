@@ -72,7 +72,8 @@ class DataTransformation:
             data_transformation_artifact = DataTransformationArtifact(
                 transformed_object_file_path=self.data_transformation_config.transformed_object_file_path,
                 transformed_train_file_path=train_array_path,
-                transformed_test_file_path=self.data_transformation_config.transformed_test_file_path
+                transformed_test_file_path=self.data_transformation_config.transformed_test_file_path,
+                label_encoder_path = self.data_validation_artifact.label_encoder_path
             )
 
             logging.info("✅ Data transformation completed successfully.")

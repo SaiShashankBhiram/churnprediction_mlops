@@ -129,8 +129,10 @@ class DataValidation:
                 y_train_file_path=self.data_validation_config.y_train_file_path,
                 y_test_file_path=self.data_validation_config.y_test_file_path,
                 schema_validation_status=schema_validation_status,  # Include schema validation status
-                dataset_drift_status=dataset_drift_status         # Include dataset drift status
+                dataset_drift_status=dataset_drift_status,
+                label_encoder_path=encoders_file_path
             )
+
 
             return data_validation_artifact
 

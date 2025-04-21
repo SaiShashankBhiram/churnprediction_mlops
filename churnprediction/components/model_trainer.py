@@ -22,6 +22,9 @@ from churnprediction.utils.main_utils.utils import (
 )
 from churnprediction.utils.ml_utils.metric.classification_metric import get_classification_score
 
+import dagshub
+dagshub.init(repo_owner='SaiShashankBhiram', repo_name='churnprediction_mlops', mlflow=True)
+
 
 class ModelTrainer:
     def __init__(self, model_trainer_config: ModelTrainerConfig, data_transformation_artifact: DataTransformationArtifact):
@@ -97,14 +100,25 @@ class ModelTrainer:
         self.track_mlflow(best_model, classification_train_metric)
         self.track_mlflow(best_model, classification_test_metric)
 
-        preprocessor = load_object(file_path=self.data_transformation_artifact.transformed_object_file_path)
+        #preprocessor = load_object(file_path=self.data_transformation_artifact.transformed_object_file_path)
 
         model_dir_path = os.path.dirname(self.model_trainer_config.trained_model_file_path)
         os.makedirs(model_dir_path, exist_ok=True)
 
-        churn_prediction_model = ChurnPredictionModel(preprocessor=preprocessor, model=best_model)
+        churn_prediction_model = ChurnPredictionModel(preprocessor=None, model=best_model)
         save_object(self.model_trainer_config.trained_model_file_path, obj=churn_prediction_model)
         save_object("final_model/model.pkl", best_model)
+
+        #copy label_encoders.json to final_model
+        
+        import shutil
+
+        label_encoder_path = self.data_transformation_artifact.label_encoder_path
+        final_encoder_path = "final_model/label_encoders.json"
+
+        os.makedirs("final_model", exist_ok=True)
+
+        shutil.copy(label_encoder_path, final_encoder_path)
 
         model_trainer_artifact = ModelTrainerArtifact(
             trained_model_file_path=self.model_trainer_config.trained_model_file_path,
