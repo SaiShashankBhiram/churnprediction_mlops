@@ -105,8 +105,13 @@ class ModelTrainer:
         model_dir_path = os.path.dirname(self.model_trainer_config.trained_model_file_path)
         os.makedirs(model_dir_path, exist_ok=True)
 
-        churn_prediction_model = ChurnPredictionModel(preprocessor=None, model=best_model)
-        save_object(self.model_trainer_config.trained_model_file_path, obj=churn_prediction_model)
+        encoder_path = self.data_transformation_artifact.label_encoder_path
+        model_path = self.model_trainer_config.trained_model_file_path
+
+        save_object(model_path, obj=best_model)
+
+        churn_prediction_model = ChurnPredictionModel(encoder_path=encoder_path, model_path=model_path)
+        save_object(model_path, obj=churn_prediction_model)
         save_object("final_model/model.pkl", best_model)
 
         #copy label_encoders.json to final_model

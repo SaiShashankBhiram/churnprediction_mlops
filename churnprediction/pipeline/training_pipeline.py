@@ -8,6 +8,9 @@ from churnprediction.components.data_ingestion import DataIngestion
 from churnprediction.components.data_validation import DataValidation
 from churnprediction.components.data_transformation import DataTransformation
 from churnprediction.components.model_trainer import ModelTrainer
+from churnprediction.cloud.s3_syncer import S3Sync
+from churnprediction.constant.training_pipeline import TRAINING_BUCKET_NAME
+
 
 from churnprediction.entity.config_entity import(
     TrainingPipelineConfig,
@@ -27,6 +30,7 @@ from churnprediction.entity.artifact_entity import(
 class TrainingPipeline:
     def __init__(self):
         self.training_pipeline_config = TrainingPipelineConfig()
+        self.s3_sync = S3Sync()
 
     def start_data_ingestion(self):
         try:
@@ -78,14 +82,44 @@ class TrainingPipeline:
 
         except Exception as e:
             raise ChurnPredictionException(e, sys)
+        
+    ## local artifact is going to s3 bucket    
+    def sync_artifact_dir_to_s3(self):
+        try:
+            artifacts_base_dir = "Artifacts"
+            if not os.path.exists(artifacts_base_dir):
+                logging.warning(f"No Artifacts directory found at: {artifacts_base_dir}")
+                return
+
+            for folder_name in os.listdir(artifacts_base_dir):
+                full_path = os.path.join(artifacts_base_dir, folder_name)
+                if os.path.isdir(full_path):
+                    aws_bucket_url = f"s3://{TRAINING_BUCKET_NAME}/artifact/{folder_name}"
+                    logging.info(f"Uploading artifact folder {full_path} to {aws_bucket_url}")
+                    self.s3_sync.sync_folder_to_s3(folder=full_path, aws_bucket_url=aws_bucket_url)
+        except Exception as e:
+            logging.error(f"Failed to upload artifacts: {e}")
+            raise ChurnPredictionException(e, sys)
+        
+    ## local final model is going to s3 bucket 
+        
+    def sync_saved_model_dir_to_s3(self):
+        try:
+            aws_bucket_url = f"s3://{TRAINING_BUCKET_NAME}/final_model"
+            self.s3_sync.sync_folder_to_s3(folder=self.training_pipeline_config.model_dir, aws_bucket_url=aws_bucket_url)
+        except Exception as e:
+            raise ChurnPredictionException(e, sys)
 
     def run_pipeline(self):
         try:
             data_ingestion_artifact=self.start_data_ingestion()
-            data_validation_artifact=self.start_data_validation(data_ingestion_artifact=data_ingestion_artifact)
-            data_transformation_artifact=self.start_data_transformation(data_validation_artifact=data_validation_artifact)
-            model_trainer_artifact=self.start_model_trainer(data_transformation_artifact=data_transformation_artifact)
+            data_validation_artifact=self.start_data_validation(data_ingestion_artifact)
+            data_transformation_artifact=self.start_data_transformation(data_validation_artifact)
+            model_trainer_artifact=self.start_model_trainer(data_transformation_artifact)
             
+            self.sync_artifact_dir_to_s3()
+            self.sync_saved_model_dir_to_s3()
+
             return model_trainer_artifact
         except Exception as e:
             raise ChurnPredictionException(e,sys)
